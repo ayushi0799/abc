@@ -1,0 +1,48 @@
+.topfields{
+  width: 45%;
+  
+}
+form{
+  padding-left: 1%;
+  padding-right: 1%;
+}
+label{
+  display: inline-block;
+  margin-right: 15px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+input{
+  margin-right: 7px;
+}
+.tablecontainer{
+  width: 100%;
+  display: flex;
+}
+.tableleftcontainer{
+  width: 70%;
+  display: inline-block;
+}
+.tablerightcontainer{
+  width: 30%;
+  display: inline-block;
+}
+.tableleftcontainer label{
+  width: 45%;
+  display: inline-block;
+}
+.tableleftcontainer input{
+  width: 45%;
+  display: inline-block;
+}
+.invoiceraised {
+  width: 75%;
+}
+.invoiceamount {
+  width: 45%;
+}
+.raised{
+  border: 2px solid grey;
+  padding: 7px;
+  margin-bottom: 4px;
+}
