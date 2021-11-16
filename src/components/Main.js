@@ -1,5 +1,3 @@
-
-import rows from "../Data.json"
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,6 +12,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link } from 'react-router-dom'
+import api from '../api/posts'
+import { useState, useEffect } from 'react';
 
 
 const StyledMenu = styled((props) => (
@@ -60,6 +60,28 @@ const StyledMenu = styled((props) => (
 
 
 function Main() {
+  const [posts, setPosts] = useState([])
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await api.get('http://localhost:3500/posts');
+        setPosts(response.data);
+        console.log(response.data)
+      } catch (err) {
+        if (err.response) {
+          // Not in the 200 response range 
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+        } else {
+          console.log(`Error: ${err.message}`);
+        }
+      }
+    }
+
+    fetchPosts();
+  }, [])
+
     const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -136,7 +158,7 @@ function Main() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.posts.map((row) => (
+          {posts.map((row) => (
             <TableRow
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
