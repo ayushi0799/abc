@@ -14,7 +14,10 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link } from 'react-router-dom'
 import api from '../api/posts'
 import { useState, useEffect } from 'react';
-
+import {useSelector,useDispatch, Provider} from "react-redux";
+import setPosts from './Main/actions'
+import { createStore } from 'redux';
+import rootReducer from '../store/rootReducer';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -58,31 +61,35 @@ const StyledMenu = styled((props) => (
 }));
 
 
-
 function Main() {
-  const [posts, setPosts] = useState([])
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get('http://localhost:3500/posts');
-        setPosts(response.data);
-        console.log(response.data)
-      } catch (err) {
-        if (err.response) {
-          // Not in the 200 response range 
+const post = useSelector(state => state.allPosts.posts)
+const dispatch = useDispatch();
+  
+  const fetchPosts = async () => {
+      const response = await api
+      .get('http://localhost:3500/posts')
+      .catch( (err) =>{
+        if (err.response) { 
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
-        } else {
+        }
+         else {
           console.log(`Error: ${err.message}`);
         }
-      }
+      });
+      dispatch(setPosts(response.data))
+      console.log(response.data)
+      
     }
-
+  useEffect(() => {
     fetchPosts();
   }, [])
+  console.log(post)
+ 
+ 
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -91,7 +98,9 @@ function Main() {
     setAnchorEl(null);
   };
     return (
-        <>
+    
+        <div data-testid="testMain ">
+       <div className="sortbutton">
         <Button
         id="demo-customized-button"
         aria-controls="demo-customized-menu"
@@ -132,6 +141,7 @@ function Main() {
           By Client Name
         </MenuItem>
       </StyledMenu>
+      </div>
         <div className="container">
             <div className="innerheader">
             
@@ -158,7 +168,8 @@ function Main() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {posts.map((row) => (
+          {post.map((row) => (
+           
             <TableRow
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -166,17 +177,18 @@ function Main() {
               <TableCell component="th" scope="row">
                 {row.id}
               </TableCell>
+              <Link to={`/SOW_details/${row.id}`}> 
               <TableCell >{row.clientname}</TableCell>
+              </Link>
               <TableCell>{row.Projectname}</TableCell>
               <TableCell>{row.PONumber}</TableCell>
               <TableCell>{row.POAmount}</TableCell>
               <TableCell>{row.ClientSponsor}</TableCell>
               {row.status==="rejected"||row.status==="drafted"?
-              <TableCell>{row.Action}</TableCell>:<TableCell>Uneditable</TableCell>}
-              
-              
+              <Link to={`/SOW_details/edit/${row.id}`}><TableCell>{row.Action}</TableCell></Link>:<TableCell aria-disabled>Uneditable</TableCell>}
               <TableCell>{row.status}</TableCell>
             </TableRow>
+           
           ))}
         </TableBody>
       </Table>
@@ -184,7 +196,9 @@ function Main() {
             
 
         </div>
-        </>
+        </div>
+       
+     
     )
 }
 
